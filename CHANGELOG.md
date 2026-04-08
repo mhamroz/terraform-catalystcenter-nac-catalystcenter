@@ -1,5 +1,8 @@
 ## 0.4.2 (unreleased)
 
+**Bug Fixes:**
+- Fix issue with provisioning the embedded wireless controller and enabling the edge role in a single Terraform run
+
 **New Features:**
 - Add option to control whether fabric site assignments are merged or replaced when managing L3 virtual networks across multiple fabric sites
 - Add `catalystcenter_power_profile` resource for AP power profiles from `catalyst_center.wireless.power_profiles` (rules, description); `catalystcenter_ap_profile` and `catalystcenter_wireless_profile` depend on it when present

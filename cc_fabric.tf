@@ -568,7 +568,7 @@ resource "catalystcenter_fabric_device" "edge_device" {
   fabric_id = try(catalystcenter_fabric_zone.fabric_zone[each.value.fabric_zone].id, catalystcenter_fabric_site.fabric_site[each.value.fabric_site].id, null)
   device_roles = try([
     for fabric_role in try(each.value.fabric_roles, []) :
-    fabric_role == "EMBEDDED_WIRELESS_CONTROLLER_NODE" && try(catalystcenter_fabric_ewlc.ewlc_device[each.key].id, null) != null ?
+    fabric_role == "EMBEDDED_WIRELESS_CONTROLLER_NODE" ?
     "WIRELESS_CONTROLLER_NODE" :
     fabric_role
   ], local.defaults.catalyst_center.inventory.devices.fabric_roles, null)
@@ -577,7 +577,7 @@ resource "catalystcenter_fabric_device" "edge_device" {
     ignore_changes = [device_roles]
   }
 
-  depends_on = [catalystcenter_device_role.role, catalystcenter_provision_devices.provision_devices, catalystcenter_provision_device.provision_device, catalystcenter_fabric_device.border_device, catalystcenter_fabric_devices.fabric_devices, catalystcenter_fabric_ewlc.ewlc_device]
+  depends_on = [catalystcenter_device_role.role, catalystcenter_provision_devices.provision_devices, catalystcenter_provision_device.provision_device, catalystcenter_fabric_device.border_device, catalystcenter_fabric_devices.fabric_devices]
 }
 
 resource "catalystcenter_fabric_ewlc" "ewlc_device" {
@@ -593,7 +593,7 @@ resource "catalystcenter_fabric_ewlc" "ewlc_device" {
   enable_rolling_ap_upgrade = try(each.value.enable_rolling_ap_upgrade, local.defaults.catalyst_center.inventory.devices.enable_rolling_ap_upgrade, false)
   ap_reboot_percentage      = try(each.value.ap_reboot_percentage, local.defaults.catalyst_center.inventory.devices.ap_reboot_percentage, 25)
 
-  depends_on = [catalystcenter_device_role.role, catalystcenter_provision_devices.provision_devices, catalystcenter_provision_device.provision_device, catalystcenter_fabric_device.border_device, catalystcenter_fabric_devices.fabric_devices, catalystcenter_assign_managed_ap_locations.managed_ap_locations]
+  depends_on = [catalystcenter_device_role.role, catalystcenter_provision_devices.provision_devices, catalystcenter_provision_device.provision_device, catalystcenter_fabric_device.border_device, catalystcenter_fabric_device.edge_device, catalystcenter_fabric_devices.fabric_devices, catalystcenter_assign_managed_ap_locations.managed_ap_locations]
 }
 
 resource "catalystcenter_fabric_vlan_to_ssid" "vlan_to_ssid" {
