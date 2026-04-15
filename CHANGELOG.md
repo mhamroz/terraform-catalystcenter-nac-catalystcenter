@@ -2,6 +2,9 @@
 
 **Bug Fixes:**
 - Fix issue with provisioning the embedded wireless controller and enabling the edge role in a single Terraform run
+- Fix multicast rendezvous point IP addresses being sent for fabric-internal RPs; `ipv4_address` and `ipv6_address` are now only populated when `rp_location` is not `FABRIC`
+- Fix extranet policy to only be managed when not using `manage_global_settings` with `managed_sites`, resolving incorrect state evaluation in single-state deployments
+- Fix L3 virtual network global instance to use `merge_fabric_sites` attribute instead of ignoring `fabric_ids` changes via lifecycle
 
 **New Features:**
 - Add RMA (Return Material Authorization) device replacement workflow with `catalystcenter_device_replacement` and `catalystcenter_device_replacement_workflow` resources; use `state: MARK_FOR_REPLACEMENT` to mark a device, then update `serial_number` and set `state: PROVISION` to trigger the replacement workflow
@@ -15,6 +18,8 @@
 
 **Improvements:**
 - Add support for skipping configuration cleanup during delete to remove unreachable provisioned devices from inventory
+- Allow `clean_up_config` to be set as a module-level default in `defaults.yaml` under `catalyst_center.inventory.devices.clean_up_config`, falling back to per-device setting
+- Add support for deploying the same template name used across multiple template projects by using a `project_name#template_name` composite key for resource addressing while preserving backward compatibility when template names are unique
 
 ## 0.4.1
 
