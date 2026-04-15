@@ -4,6 +4,7 @@
 - Fix issue with provisioning the embedded wireless controller and enabling the edge role in a single Terraform run
 
 **New Features:**
+- Add RMA (Return Material Authorization) device replacement workflow with `catalystcenter_device_replacement` and `catalystcenter_device_replacement_workflow` resources; use `state: MARK_FOR_REPLACEMENT` to mark a device, then update `serial_number` and set `state: PROVISION` to trigger the replacement workflow
 - Add option to control whether fabric site assignments are merged or replaced when managing L3 virtual networks across multiple fabric sites
 - Add `catalystcenter_power_profile` resource for AP power profiles from `catalyst_center.wireless.power_profiles` (rules, description); `catalystcenter_ap_profile` and `catalystcenter_wireless_profile` depend on it when present
 - Add `catalystcenter_anchor_group` resource for wireless anchor groups from `catalyst_center.wireless.anchor_groups`; supports managed and external anchors with up to 3 mobility anchors per group
