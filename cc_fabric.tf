@@ -892,7 +892,7 @@ locals {
   }
   fabric_multicast_replication_modes = {
     for fabric_site in try(local.catalyst_center.fabric.fabric_sites, []) :
-    fabric_site.name => fabric_site.multicast.replication_mode
+    fabric_site.name => try(fabric_site.multicast.replication_mode, null)
     if try(fabric_site.multicast.replication_mode, null) != null
   }
 }
