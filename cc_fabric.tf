@@ -870,7 +870,6 @@ locals {
           virtual_network_name = try(vn.name, null)
           ip_pool_name         = try(vn.ip_pool_name, vn.ipPoolName, null)
           ipv4_ssm_ranges      = try(vn.ipv4_ssm_ranges, null) != null ? (try(tolist(vn.ipv4_ssm_ranges), [tostring(vn.ipv4_ssm_ranges)])) : []
-          replication_mode     = try(vn.replication_mode, null)
           multicast_rps = [
             for rp in try(vn.multicast_rps, vn.multicast_RPs, []) : {
               name               = try(rp.name, null)
@@ -892,9 +891,9 @@ locals {
     } if try(fabric_site.multicast, null) != null
   }
   fabric_multicast_replication_modes = {
-    for fabric_site, config in local.fabric_multicast_configs :
-    fabric_site => try([for vn in config.virtual_networks : vn.replication_mode if vn.replication_mode != null][0], null)
-    if try([for vn in config.virtual_networks : vn.replication_mode if vn.replication_mode != null][0], null) != null
+    for fabric_site in try(local.catalyst_center.fabric.fabric_sites, []) :
+    fabric_site.name => fabric_site.multicast.replication_mode
+    if try(fabric_site.multicast.replication_mode, null) != null
   }
 }
 
@@ -914,7 +913,7 @@ resource "catalystcenter_fabric_multicast_virtual_networks" "multicast" {
       ip_pool_name         = try(vn.ip_pool_name, null)
       ipv4_ssm_ranges      = try(vn.ipv4_ssm_ranges, [])
       multicast_rps = [
-      for rp in try(vn.multicast_rps, []) : {
+        for rp in try(vn.multicast_rps, []) : {
           ipv4_address       = try(rp.ipv4_address, null)
           ipv6_address       = try(rp.ipv6_address, null)
           ipv4_asm_ranges    = try(rp.ipv4_asm_ranges, null)
