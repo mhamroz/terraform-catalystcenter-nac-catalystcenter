@@ -1,6 +1,7 @@
 ## 0.4.2 (unreleased)
 
 **Bug Fixes:**
+- Fix AP provisioning for devices without IP address 
 - Fix issue with provisioning the embedded wireless controller and enabling the edge role in a single Terraform run
 - Fix multicast rendezvous point IP addresses being sent for fabric-internal RPs; `ipv4_address` and `ipv6_address` are now only populated when `rp_location` is not `FABRIC`
 - Fix extranet policy to only be managed when not using `manage_global_settings` with `managed_sites`, resolving incorrect state evaluation in single-state deployments
