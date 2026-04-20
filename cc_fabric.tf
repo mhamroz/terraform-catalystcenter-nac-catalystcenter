@@ -873,14 +873,14 @@ locals {
           multicast_rps = [
             for rp in try(vn.multicast_rps, vn.multicast_RPs, []) : {
               name               = try(rp.name, null)
-              ipv4_address       = try(rp.ipv4_address, rp.ipv4Address, null)
-              ipv6_address       = try(rp.ipv6_address, rp.ipv6Address, null)
+              ipv4_address       = try(rp.rp_location, "") != "FABRIC" ? try(rp.ipv4_address, null) : null
+              ipv6_address       = try(rp.rp_location, "") != "FABRIC" ? try(rp.ipv6_address, null) : null
               ipv4_asm_ranges    = try(rp.ipv4_asm_ranges, null) != null ? try(tolist(rp.ipv4_asm_ranges), [tostring(rp.ipv4_asm_ranges)]) : try(rp.ipv4AsmRanges, null) != null ? [try(rp.ipv4AsmRanges, null)] : null
               ipv6_asm_ranges    = try(rp.ipv6_asm_ranges, null) != null ? try(tolist(rp.ipv6_asm_ranges), [tostring(rp.ipv6_asm_ranges)]) : try(rp.ipv6AsmRanges, null) != null ? [try(rp.ipv6AsmRanges, null)] : null
               is_default_v4_rp   = try(rp.is_default_v4_rp, rp.isDefaultV4RP, null)
               is_default_v6_rp   = try(rp.is_default_v6_rp, rp.isDefaultV6RP, null)
-              rp_device_location = try(rp.rp_location, rp.rpLocation, null)
-              network_device_ids = try(rp.rp_location, rp.rpLocation, "") == "FABRIC" ? [
+              rp_device_location = try(rp.rp_location, null)
+              network_device_ids = try(rp.rp_location, "") == "FABRIC" ? [
                 for device_name in try(rp.fabric_rps, rp.FabricRPs, []) :
                 try(local.device_name_to_id[device_name], null)
               ] : null
