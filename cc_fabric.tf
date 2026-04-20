@@ -868,12 +868,33 @@ locals {
       virtual_networks = [
         for vn in try(fabric_site.multicast.virtual_networks, []) : {
           virtual_network_name = try(vn.name, null)
+          fabric_id            = try(local.combined_fabric_id_list[fabric_site.name], null)
           ip_pool_name         = try(vn.ip_pool_name, null)
-          ipv4_ssm_ranges      = try(vn.ipv4_ssm_ranges, [])
-          multicast_rps        = try(vn.multicast_rps, [])
+          ipv4_ssm_ranges      = try(vn.ipv4_ssm_ranges, null)
+          multicast_rps = [
+            for rp in try(vn.multicast_rps, []) : {
+              name               = try(rp.name, null)
+              ipv4_address       = try(rp.rp_location, "") != "FABRIC" ? try(rp.ipv4_address, null) : null
+              ipv6_address       = try(rp.rp_location, "") != "FABRIC" ? try(rp.ipv6_address, null) : null
+              ipv4_asm_ranges    = try(rp.ipv4_asm_ranges, null)
+              ipv6_asm_ranges    = try(rp.ipv6_asm_ranges, null)
+              is_default_v4_rp   = try(rp.is_default_v4_rp, null)
+              is_default_v6_rp   = try(rp.is_default_v6_rp, null)
+              rp_device_location = try(rp.rp_location, null)
+              network_device_ids = try(rp.rp_location, "") == "FABRIC" ? [
+                for device_name in try(rp.fabric_rps, []) :
+                try(local.device_name_to_id[device_name], null)
+              ] : null
+            }
+          ]
         }
       ]
     } if try(fabric_site.multicast, null) != null
+  }
+  fabric_multicast_replication_modes = {
+    for fabric_site in try(local.catalyst_center.fabric.fabric_sites, []) :
+    fabric_site.name => try(fabric_site.multicast.replication_mode, null)
+    if try(fabric_site.multicast.replication_mode, null) != null
   }
 }
 
@@ -884,34 +905,27 @@ resource "catalystcenter_fabric_multicast_virtual_networks" "multicast" {
     if contains(local.sites, fabric_site) && length(config.virtual_networks) > 0
   }
 
-  fabric_id = try(catalystcenter_fabric_site.fabric_site[each.key].id, null)
+  fabric_id = try(local.combined_fabric_id_list[each.key].id, null)
 
-  virtual_networks = [
-    for vn in each.value.virtual_networks : {
-      fabric_id            = try(catalystcenter_fabric_site.fabric_site[each.key].id, null)
-      virtual_network_name = try(vn.virtual_network_name, null)
-      ip_pool_name         = try(vn.ip_pool_name, null)
-      ipv4_ssm_ranges      = try(vn.ipv4_ssm_ranges, [])
-      multicast_rps = [
-        for rp in try(vn.multicast_rps, []) : {
-          ipv4_address       = try(rp.rp_location, "") != "FABRIC" ? try(rp.ipv4_address, null) : null
-          ipv6_address       = try(rp.rp_location, "") != "FABRIC" ? try(rp.ipv6_address, null) : null
-          ipv4_asm_ranges    = try(rp.ipv4_asm_ranges, [])
-          ipv6_asm_ranges    = try(rp.ipv6_asm_ranges, [])
-          is_default_v4_rp   = try(rp.is_default_v4_rp, null)
-          is_default_v6_rp   = try(rp.is_default_v6_rp, null)
-          rp_device_location = try(rp.rp_location, null)
-          network_device_ids = try(rp.rp_location, "") == "FABRIC" ? [
-            for device_name in try(rp.fabric_rps, []) :
-            try(local.device_name_to_id[device_name], local.device_name_to_id[local.name_to_fqdn_mapping[device_name]], null)
-          ] : []
-        }
-      ]
-    }
-  ]
+  virtual_networks = each.value.virtual_networks
 
   depends_on = [
     catalystcenter_fabric_site.fabric_site, catalystcenter_fabric_l3_virtual_network.l3_vn, catalystcenter_virtual_network_to_fabric_site.l3_vn_to_fabric_site, catalystcenter_ip_pool_reservation.pool_reservation, catalystcenter_provision_devices.provision_devices, catalystcenter_provision_device.provision_device
+  ]
+}
+
+resource "catalystcenter_fabric_multicast_replication_mode" "replication_mode" {
+  for_each = {
+    for fabric_site, replication_mode in local.fabric_multicast_replication_modes :
+    fabric_site => replication_mode
+    if contains(local.sites, fabric_site)
+  }
+
+  fabric_id        = try(catalystcenter_fabric_site.fabric_site[each.key].id, null)
+  replication_mode = each.value
+
+  depends_on = [
+    catalystcenter_fabric_site.fabric_site, catalystcenter_fabric_multicast_virtual_networks.multicast
   ]
 }
 
