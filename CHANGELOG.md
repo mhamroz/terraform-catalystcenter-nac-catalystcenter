@@ -1,20 +1,20 @@
-## 0.4.2 (unreleased)
+## 0.4.2
 
 **Bug Fixes:**
 - Fix AP provisioning for devices without IP address 
 - Fix issue with provisioning the embedded wireless controller and enabling the edge role in a single Terraform run
-- Fix multicast rendezvous point IP addresses being sent for fabric-internal RPs; `ipv4_address` and `ipv6_address` are now only populated when `rp_location` is not `FABRIC`
+- Fix multicast rendezvous point IP addresses being sent for Fabric-internal RPs; `ipv4_address` and `ipv6_address` are now only populated when `rp_location` is not `FABRIC`
 - Fix extranet policy to only be managed when not using `manage_global_settings` with `managed_sites`, resolving incorrect state evaluation in single-state deployments
 - Fix L3 virtual network global instance to use `merge_fabric_sites` attribute instead of ignoring `fabric_ids` changes via lifecycle
 
 **New Features:**
-- Add RMA (Return Material Authorization) device replacement workflow with `catalystcenter_device_replacement` and `catalystcenter_device_replacement_workflow` resources; use `state: MARK_FOR_REPLACEMENT` to mark a device, then update `serial_number` and set `state: PROVISION` to trigger the replacement workflow
-- Add option to control whether fabric site assignments are merged or replaced when managing L3 virtual networks across multiple fabric sites
+- Add Return Material Authorization (RMA) device replacement workflow
+- Add option to control whether fabric site assignments are merged or replaced when managing L3 virtual networks across multiple sites
 - Add `catalystcenter_power_profile` resource for AP power profiles from `catalyst_center.wireless.power_profiles` (rules, description); `catalystcenter_ap_profile` and `catalystcenter_wireless_profile` depend on it when present
 - Add `catalystcenter_anchor_group` resource for wireless anchor groups from `catalyst_center.wireless.anchor_groups`; supports managed and external anchors with up to 3 mobility anchors per group
 - Add `anchor_group_name` support in wireless profile `ssid_details` to link SSIDs to anchor groups for guest traffic tunneling
 - Add `vlan_group_name` support in wireless profile `ssid_details` for client VLAN load-balancing via WLC VLAN Groups (mutually exclusive with `interface_name`)
-- Add AP Profile support with `catalystcenter_ap_profile` resource for managing Access Point profiles including management settings (802.1X, SSH, Telnet, CDP), AWIPS, rogue detection, mesh networking, power profiles, and client limits; NaC data model uses `power_profile` for the always-on profile and `power_profile` on each `calendar_power_profiles` row for scheduled profiles
+- Add AP Profile support with `catalystcenter_ap_profile` resource for managing Access Point profiles including management settings (802.1X, SSH, Telnet, CDP), aWIPS, rogue detection, mesh networking, power profiles, and client limits; NaC data model uses `power_profile` for the always-on profile and `power_profile` on each `calendar_power_profiles` row for scheduled profiles
 - Add Wireless Profile Site Tag support with `catalystcenter_wireless_profile_site_tag` resource for attaching AP profiles to wireless network profiles per site via site tags
 - Add support for updating device management IP address via `catalystcenter_update_device_management_address` resource when `device_ip` in data model differs from current Catalyst Center management IP
 - Add support for selecting `replication_mode` as either NATIVE_MULTICAST or HEADEND_REPLICATION
@@ -22,7 +22,7 @@
 **Improvements:**
 - Add support for skipping configuration cleanup during delete to remove unreachable provisioned devices from inventory
 - Allow `clean_up_config` to be set as a module-level default in `defaults.yaml` under `catalyst_center.inventory.devices.clean_up_config`, falling back to per-device setting
-- Add support for deploying the same template name used across multiple template projects by using a `project_name#template_name` composite key for resource addressing while preserving backward compatibility when template names are unique
+- Add support for deploying templates with the same name across multiple template projects by using a `project_name#template_name` composite key for resource addressing while preserving backward compatibility when template names are unique
 
 ## 0.4.1
 
