@@ -1,3 +1,9 @@
+## 0.4.3 (unreleased)
+
+**Bug Fixes:**
+- Fix L2 Handoff resources being unnecessarily destroyed and recreated when removing an unrelated Anycast Gateway; `internal_vlan_id` is now ignored in lifecycle changes as it is immutable after creation in Catalyst Center
+  
+
 ## 0.4.2
 
 **Bug Fixes:**
