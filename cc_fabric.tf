@@ -172,17 +172,23 @@ locals {
 }
 
 data "catalystcenter_transit_network" "transit" {
-  for_each = var.manage_global_settings == false && length(var.managed_sites) != 0 ? toset([for transit in try(local.catalyst_center.fabric.transits, []) : transit.name]) : toset([])
+  # `create_per_site` is only honored for IP_BASED_TRANSIT (see resource below); only those
+  # flagged transits are excluded from the lookup, everything else is still read by name.
+  for_each = var.manage_global_settings == false && length(var.managed_sites) != 0 ? toset([for transit in try(local.catalyst_center.fabric.transits, []) : transit.name if !(try(transit.create_per_site, false) && try(transit.type, local.defaults.catalyst_center.fabric.transits.type, "") == "IP_BASED_TRANSIT")]) : toset([])
 
   name = each.key
 }
 
 resource "catalystcenter_transit_network" "transit" {
-  for_each = { for transit in try(local.catalyst_center.fabric.transits, []) : transit.name => transit if var.manage_global_settings &&
+  # Per-site creation (`create_per_site`) is intentionally limited to IP_BASED_TRANSIT: it needs no
+  # control-plane devices, so it is safe to create from a site state. SDA transits require provisioned
+  # control-plane devices (see the manage_global_settings branch) and remain global/lookup-only.
+  for_each = { for transit in try(local.catalyst_center.fabric.transits, []) : transit.name => transit if(var.manage_global_settings &&
     alltrue([
       for device in try(transit.control_plane_devices, []) :
       contains(local.provisioned_sda_transit_cp_devices, device)
-    ]) || (!var.manage_global_settings && length(var.managed_sites) == 0)
+    ])) || (!var.manage_global_settings && length(var.managed_sites) == 0) ||
+    (!var.manage_global_settings && length(var.managed_sites) != 0 && try(transit.create_per_site, false) && try(transit.type, local.defaults.catalyst_center.fabric.transits.type, "") == "IP_BASED_TRANSIT")
   }
 
   name                              = each.key

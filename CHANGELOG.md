@@ -1,3 +1,8 @@
+## 0.4.6 (unreleased)
+
+**New Features:**
+- Add `fabric.transits[].create_per_site` opt-in flag so a per-site `IP_BASED_TRANSIT` defined in site data is created via `catalystcenter_transit_network` even in per-site mode (`manage_global_settings = false` with a non-empty `managed_sites`). Flagged transit names are excluded from the `catalystcenter_transit_network` data source lookup so it no longer errors reading a not-yet-created transit. The flag is honored only for `IP_BASED_TRANSIT` (which needs no control-plane devices); SDA transit types ignore it and remain global/lookup-only. Transits without the flag keep the existing behavior (created only in a global apply and referenced per-site).
+
 ## 0.4.5
 
 **Bug Fixes:**
