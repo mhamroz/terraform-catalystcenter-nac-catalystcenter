@@ -628,7 +628,7 @@ resource "catalystcenter_fabric_device" "border_device" {
 }
 
 resource "catalystcenter_fabric_device" "wireless_controller" {
-  for_each = { for device in try(local.catalyst_center.inventory.devices, []) : device.name => device if(strcontains(device.state, "PROVISION") || device.state == "MARK_FOR_REPLACEMENT") && contains(try(device.fabric_roles, []), "WIRELESS_CONTROLLER_NODE") && var.use_bulk_api == false }
+  for_each = { for device in try(local.catalyst_center.inventory.devices, []) : device.name => device if(strcontains(device.state, "PROVISION") || device.state == "MARK_FOR_REPLACEMENT") && contains(try(device.fabric_roles, []), "WIRELESS_CONTROLLER_NODE") && (contains(local.sites, try(device.fabric_site, "NONE")) || contains(local.sites, try(device.fabric_zone, "NONE"))) && var.use_bulk_api == false }
 
   network_device_id = coalesce(
     try(lookup(local.device_name_to_id, each.value.name, null), null),
