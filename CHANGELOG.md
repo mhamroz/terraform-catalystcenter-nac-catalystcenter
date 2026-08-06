@@ -6,10 +6,12 @@
 **New Features:**
 - Add `fabric.transits[].create_per_site` opt-in flag so a per-site `IP_BASED_TRANSIT` defined in site data is created via `catalystcenter_transit_network` even in per-site mode (`manage_global_settings = false` with a non-empty `managed_sites`). Flagged transit names are excluded from the `catalystcenter_transit_network` data source lookup so it no longer errors reading a not-yet-created transit. The flag is honored only for `IP_BASED_TRANSIT` (which needs no control-plane devices); SDA transit types ignore it and remain global/lookup-only. Transits without the flag keep the existing behavior (created only in a global apply and referenced per-site).
 
+- Add support for anchoring anycast gateways (MSRB). When `use_bulk_api = true`, anchored anycast gateways are created via a new site-keyed plural `catalystcenter_anycast_gateways.anycast_gateways_anchoring["<fabric_site>"]` resource that aggregates all anchored pools at a site into a single bulk call, following the same naming pattern as the base `catalystcenter_anycast_gateways.anycast_gateways` resource. With `use_bulk_api = false`, it uses the per-pool singular `catalystcenter_anycast_gateway.anycast_gateway_anchoring["<fabric_site>#_#<ip_pool_name>"]` resource. Anchor-first create / anchor-last destroy ordering (NCSO20382) is preserved via `depends_on` on the base anycast gateway resources.
+
 ## 0.4.5
 
 **Bug Fixes:**
--  Improve the managed-AP-location controller-role validation, so it covers both Fabric and non-Fabric use cases 
+-  Improve the managed-AP-location controller-role validation, so it covers both Fabric and non-Fabric use cases
 
 **New Features:**
 - Restructure LAN Automation data model into `lan_automation.devices[]` (device discovery sessions) and `lan_automation.links[]` (DAY-N link add/delete operations with `ADD_LINK` / `DELETE_LINK` actions) via new `catalystcenter_lan_automation_link` provider resource

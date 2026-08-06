@@ -71,8 +71,10 @@ module "catalystcenter" {
 | [catalystcenter_aaa_settings.global_aaa_servers](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/aaa_settings) | resource |
 | [catalystcenter_anchor_group.anchor_group](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/anchor_group) | resource |
 | [catalystcenter_anycast_gateway.anycast_gateway](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/anycast_gateway) | resource |
+| [catalystcenter_anycast_gateway.anycast_gateway_anchoring](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/anycast_gateway) | resource |
 | [catalystcenter_anycast_gateway.anycast_gateway_zone](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/anycast_gateway) | resource |
 | [catalystcenter_anycast_gateways.anycast_gateways](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/anycast_gateways) | resource |
+| [catalystcenter_anycast_gateways.anycast_gateways_anchoring](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/anycast_gateways) | resource |
 | [catalystcenter_anycast_gateways.anycast_gateways_zone](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/anycast_gateways) | resource |
 | [catalystcenter_ap_profile.ap_profile](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/ap_profile) | resource |
 | [catalystcenter_apply_pending_fabric_events.fabric_pending_events](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/apply_pending_fabric_events) | resource |
@@ -134,6 +136,7 @@ module "catalystcenter" {
 | [catalystcenter_fabric_l2_virtual_network.l2_vn_zone](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/fabric_l2_virtual_network) | resource |
 | [catalystcenter_fabric_l3_handoff_ip_transits.l3_handoff_ip_transits](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/fabric_l3_handoff_ip_transits) | resource |
 | [catalystcenter_fabric_l3_handoff_sda_transit.sda_transit](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/fabric_l3_handoff_sda_transit) | resource |
+| [catalystcenter_fabric_l3_virtual_network.anchored_site_l3_vn](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/fabric_l3_virtual_network) | resource |
 | [catalystcenter_fabric_l3_virtual_network.global_l3_vn](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/fabric_l3_virtual_network) | resource |
 | [catalystcenter_fabric_l3_virtual_network.l3_vn](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/fabric_l3_virtual_network) | resource |
 | [catalystcenter_fabric_multicast_replication_mode.replication_mode](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/fabric_multicast_replication_mode) | resource |
