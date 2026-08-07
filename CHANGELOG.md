@@ -1,12 +1,11 @@
 ## 0.4.6 (unreleased)
 
+**New Features:**
+- Add support for anchored anycast gateways (Multi-Site Remote Border); anycast gateways of a virtual network that defines an `anchor_site` are now deployed on the remote fabric sites as anchored gateways, with anchor-site gateways created first and removed last so the ordering required by Catalyst Center is respected. Supported with both `use_bulk_api = true` and `use_bulk_api = false`
+- Add `fabric.transits[].create_per_site` flag to create an `IP_BASED_TRANSIT` defined in site data while in per-site mode (`manage_global_settings = false` with a non-empty `managed_sites`), instead of only referencing a transit created by a global apply. The flag is honored only for `IP_BASED_TRANSIT`; SDA transit types remain global-only, and transits without the flag keep the existing behavior
+
 **Improvements:**
 - Wrap credential and secret fields with `sensitive()` to prevent sensitive values from being exposed in Terraform plan/apply output and state diffs
-
-**New Features:**
-- Add `fabric.transits[].create_per_site` opt-in flag so a per-site `IP_BASED_TRANSIT` defined in site data is created via `catalystcenter_transit_network` even in per-site mode (`manage_global_settings = false` with a non-empty `managed_sites`). Flagged transit names are excluded from the `catalystcenter_transit_network` data source lookup so it no longer errors reading a not-yet-created transit. The flag is honored only for `IP_BASED_TRANSIT` (which needs no control-plane devices); SDA transit types ignore it and remain global/lookup-only. Transits without the flag keep the existing behavior (created only in a global apply and referenced per-site).
-
-- Add support for anchoring anycast gateways (MSRB). When `use_bulk_api = true`, anchored anycast gateways are created via a new site-keyed plural `catalystcenter_anycast_gateways.anycast_gateways_anchoring["<fabric_site>"]` resource that aggregates all anchored pools at a site into a single bulk call, following the same naming pattern as the base `catalystcenter_anycast_gateways.anycast_gateways` resource. With `use_bulk_api = false`, it uses the per-pool singular `catalystcenter_anycast_gateway.anycast_gateway_anchoring["<fabric_site>#_#<ip_pool_name>"]` resource. Anchor-first create / anchor-last destroy ordering (NCSO20382) is preserved via `depends_on` on the base anycast gateway resources.
 
 ## 0.4.5
 
