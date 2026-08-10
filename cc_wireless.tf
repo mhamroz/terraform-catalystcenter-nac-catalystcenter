@@ -150,6 +150,25 @@ resource "catalystcenter_anchor_group" "anchor_group" {
   }]
 }
 
+resource "catalystcenter_wireless_pre_auth_acl" "pre_auth_acl" {
+  for_each = { for acl in try(local.catalyst_center.wireless.security_settings.pre_auth_acls, []) : acl.name => acl if var.manage_global_settings || (!var.manage_global_settings && length(var.managed_sites) == 0) }
+
+  acl_list_name                = each.key
+  acl_name                     = try(each.value.acl_name, each.key)
+  ipv6_acl_enabled             = try(each.value.ipv6_enabled, local.defaults.catalyst_center.wireless.security_settings.pre_auth_acls.ipv6_enabled, null)
+  include_auto_generated_rules = try(each.value.include_auto_generated_rules, local.defaults.catalyst_center.wireless.security_settings.pre_auth_acls.include_auto_generated_rules, null)
+  walled_garden_urls           = try(each.value.walled_garden_urls, local.defaults.catalyst_center.wireless.security_settings.pre_auth_acls.walled_garden_urls, null)
+  ip_acl_rules = [for rule in try(each.value.rules, []) : {
+    source_address                    = rule.source_address
+    source_subnet_mask_or_prefix      = try(rule.source_prefix, local.defaults.catalyst_center.wireless.security_settings.pre_auth_acls.rules.source_prefix, 32)
+    destination_address               = rule.destination_address
+    destination_subnet_mask_or_prefix = try(rule.destination_prefix, local.defaults.catalyst_center.wireless.security_settings.pre_auth_acls.rules.destination_prefix, 32)
+    source_ports                      = try(rule.source_ports, local.defaults.catalyst_center.wireless.security_settings.pre_auth_acls.rules.source_ports, "0-65535")
+    destination_ports                 = try(rule.destination_ports, local.defaults.catalyst_center.wireless.security_settings.pre_auth_acls.rules.destination_ports, "0-65535")
+    protocol                          = try(rule.protocol, local.defaults.catalyst_center.wireless.security_settings.pre_auth_acls.rules.protocol, null)
+  }]
+}
+
 # Create AP Profiles from YAML configuration
 resource "catalystcenter_ap_profile" "ap_profile" {
   for_each = { for profile in try(local.catalyst_center.wireless.ap_profiles, []) : profile.name => profile if var.manage_global_settings || (!var.manage_global_settings && length(var.managed_sites) == 0) }
@@ -293,6 +312,8 @@ resource "catalystcenter_wireless_ssid" "ssid" {
   ssid_radio_type                             = try(local.ssid_radio_type_mapping[each.value.ssid_radio_type], local.defaults.catalyst_center.wireless.ssids.ssid_radio_type, null)
   web_passthrough                             = try(each.value.web_passthrough, local.defaults.catalyst_center.wireless.ssids.web_passthrough, null)
   wlan_band_select                            = try(each.value.wlan_band_select, local.defaults.catalyst_center.wireless.ssids.wlan_band_select, null)
+
+  depends_on = [catalystcenter_wireless_pre_auth_acl.pre_auth_acl]
 }
 
 resource "catalystcenter_wireless_rf_profile" "rf_profile" {

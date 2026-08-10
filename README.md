@@ -38,7 +38,7 @@ module "catalystcenter" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_catalystcenter"></a> [catalystcenter](#requirement\_catalystcenter) | ~> 0.5.23 |
+| <a name="requirement_catalystcenter"></a> [catalystcenter](#requirement\_catalystcenter) | ~> 0.5.24 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | >= 2.3.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.12.1 |
 | <a name="requirement_utils"></a> [utils](#requirement\_utils) | >= 1.0.0 |
@@ -190,6 +190,7 @@ module "catalystcenter" {
 | [catalystcenter_wireless_device_provision.wireless_controller](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/wireless_device_provision) | resource |
 | [catalystcenter_wireless_fabric_multicast.wireless_multicast](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/wireless_fabric_multicast) | resource |
 | [catalystcenter_wireless_interface.interface](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/wireless_interface) | resource |
+| [catalystcenter_wireless_pre_auth_acl.pre_auth_acl](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/wireless_pre_auth_acl) | resource |
 | [catalystcenter_wireless_profile.wireless_profile](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/wireless_profile) | resource |
 | [catalystcenter_wireless_profile_policy_tag.policy_tag](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/wireless_profile_policy_tag) | resource |
 | [catalystcenter_wireless_profile_site_tag.site_tag](https://registry.terraform.io/providers/CiscoDevNet/catalystcenter/latest/docs/resources/wireless_profile_site_tag) | resource |
