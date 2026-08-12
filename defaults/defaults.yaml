@@ -101,6 +101,15 @@ defaults:
     wireless:
       rf_profiles:
         default_rf_profile: false
+      security_settings:
+        pre_auth_acls:
+          ipv6_enabled: false
+          include_auto_generated_rules: true
+          rules:
+            source_prefix: 32
+            destination_prefix: 32
+            source_ports: "0-65535"
+            destination_ports: "0-65535"
       ap_profiles:
         remote_worker_enabled: false
         auth_type: NO-AUTH
