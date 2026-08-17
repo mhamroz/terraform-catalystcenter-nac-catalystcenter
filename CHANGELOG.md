@@ -1,4 +1,4 @@
-## 0.4.6 (unreleased)
+## 0.4.6
 
 **New Features:**
 - Add `wireless.ssids[].radius_profiling` and `wireless.ssids[].policy_profile_name` attributes; `radius_profiling` enables RADIUS client profiling on an SSID (requires at least one AAA/PSN server) and `policy_profile_name` sets the WLAN policy profile name (both require Catalyst Center 3.1.3 or later)
