@@ -566,7 +566,7 @@ resource "catalystcenter_anycast_gateway" "anycast_gateway_zone" {
   tcp_mss_adjustment                        = try(each.value.gw.tcp_mss_adjustment, local.defaults.catalyst_center.fabric.fabric_sites.anycast_gateways.tcp_mss_adjustment, null)
   group_based_policy_enforcement_enabled    = lookup(each.value.gw, "pool_type", "") == "EXTENDED_NODE" ? try(each.value.gw.group_based_policy_enforcement_enabled, local.defaults.catalyst_center.fabric.fabric_sites.anycast_gateways.group_based_policy_enforcement_enabled, null) : null
 
-  depends_on = [catalystcenter_ip_pool_reservation.pool_reservation, catalystcenter_fabric_zone.fabric_zone, catalystcenter_fabric_l3_virtual_network.l3_vn, catalystcenter_fabric_l3_virtual_network.anchored_site_l3_vn, catalystcenter_virtual_network_to_fabric_site.l3_vn_to_fabric_site, catalystcenter_anycast_gateway.anycast_gateway]
+  depends_on = [catalystcenter_ip_pool_reservation.pool_reservation, catalystcenter_fabric_zone.fabric_zone, catalystcenter_fabric_l3_virtual_network.l3_vn, catalystcenter_fabric_l3_virtual_network.anchored_site_l3_vn, catalystcenter_virtual_network_to_fabric_site.l3_vn_to_fabric_site, catalystcenter_anycast_gateway.anycast_gateway, catalystcenter_anycast_gateway.anycast_gateway_anchoring]
 }
 
 resource "catalystcenter_anycast_gateways" "anycast_gateways" {
@@ -668,7 +668,7 @@ resource "catalystcenter_anycast_gateways" "anycast_gateways_zone" {
     }
   ]
 
-  depends_on = [catalystcenter_ip_pool_reservation.pool_reservation, catalystcenter_fabric_zone.fabric_zone, catalystcenter_fabric_l3_virtual_network.l3_vn, catalystcenter_fabric_l3_virtual_network.anchored_site_l3_vn, catalystcenter_virtual_network_to_fabric_site.l3_vn_to_fabric_site, catalystcenter_anycast_gateways.anycast_gateways]
+  depends_on = [catalystcenter_ip_pool_reservation.pool_reservation, catalystcenter_fabric_zone.fabric_zone, catalystcenter_fabric_l3_virtual_network.l3_vn, catalystcenter_fabric_l3_virtual_network.anchored_site_l3_vn, catalystcenter_virtual_network_to_fabric_site.l3_vn_to_fabric_site, catalystcenter_anycast_gateways.anycast_gateways, catalystcenter_anycast_gateways.anycast_gateways_anchoring]
 }
 
 locals {
