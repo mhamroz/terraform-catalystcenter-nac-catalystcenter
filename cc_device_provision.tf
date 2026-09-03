@@ -118,7 +118,7 @@ locals {
     for d in try(local.catalyst_center.inventory.devices, []) :
     d.site => {
       name          = d.name
-      fqdn_name     = d.fqdn_name
+      fqdn_name     = try(d.fqdn_name, null)
       device_ip     = try(d.device_ip, null)
       serial_number = try(d.serial_number, null)
     }... if(strcontains(d.state, "PROVISION") || d.state == "ASSIGN") && contains(local.sites, try(d.site, "NONE")) && try(d.type, null) == "AccessPoint"
@@ -173,7 +173,7 @@ locals {
     && lookup(local.device_ip_to_id, try(device.device_ip, ""), null) == null
   ]
 
-  missing_access_points_error = length(local.missing_access_points) > 0 ? "❌ The following access points are not found in Catalyst Center inventory:\n\n${join("\n", [for d in local.missing_access_points : "  • ${d.name} (Serial: ${try(d.serial_number, "N/A")}, FQDN: ${try(d.fqdn_name, "N/A")}, Site: ${d.site})"])}\n\nAn access point is resolved by `serial_number` first, then `name` / `fqdn_name`, then `device_ip`. Because Catalyst Center assigns AP hostnames at claim time and AP management IPs are ephemeral, `serial_number` is the recommended identifier.\n\nAction required: Add `serial_number` to these access points in the data model, or ensure they are claimed and present in Catalyst Center inventory before running Terraform." : ""
+  missing_access_points_error = length(local.missing_access_points) > 0 ? "❌ The following access points are not found in Catalyst Center inventory:\n\n${join("\n", [for d in local.missing_access_points : "  • ${d.name} (Serial: ${try(d.serial_number, "N/A")}, FQDN: ${try(d.fqdn_name, "N/A")}, Site: ${d.site})"])}\n\nAn access point is resolved by `serial_number` first, then `name` / `fqdn_name`. Resolution by `device_ip` does not apply to Catalyst 9100-series (C91xx) or Cisco Wireless (CW91xx) access points, whose management IPs are ephemeral and deliberately excluded from IP-based lookup. Because Catalyst Center also assigns AP hostnames at claim time, `serial_number` is the recommended identifier.\n\nAction required: Add `serial_number` to these access points in the data model, or ensure they are claimed and present in Catalyst Center inventory before running Terraform." : ""
 
   # Devices Terraform will actually provision — same scope as the AP-location /
   # controller resources, so the guard fires only when the destructive delete is
@@ -427,7 +427,16 @@ resource "time_sleep" "wait_for_managed_ap_locations" {
 
 locals {
   provisioned_access_points = [
-    for device in try(local.catalyst_center.inventory.devices, []) : device if(strcontains(device.state, "PROVISION")) && try(device.type, null) == "AccessPoint" && contains(local.sites, try(device.site, "NONE"))
+    for device in try(local.catalyst_center.inventory.devices, []) : device
+    if(strcontains(device.state, "PROVISION"))
+    && try(device.type, null) == "AccessPoint"
+    && contains(local.sites, try(device.site, "NONE"))
+    && (
+      lookup(local.device_serial_to_id, try(device.serial_number, ""), null) != null ||
+      lookup(local.device_name_to_id, device.name, null) != null ||
+      lookup(local.device_name_to_id, try(device.fqdn_name, ""), null) != null ||
+      lookup(local.device_ip_to_id, try(device.device_ip, ""), null) != null
+    )
   ]
 
   provisioned_access_points_by_site = {
